@@ -82,7 +82,7 @@ while True:
             clientSoc.send(response)
             if response.find("Cache-control: no-cache") > 0:
                 print "[Proxy Server]: Data not cached!"
-            else:
+            elif response.find("HTTP/1.0 200 OK") >= 0:
                 print "[Proxy Server]: Caching data!"
                 if  cacheSize == 3:
                     cacheData.popitem()
