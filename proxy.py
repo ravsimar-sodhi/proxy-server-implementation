@@ -32,7 +32,9 @@ def addHeader(request, header):
     splitMess.insert(3,header)
     modMessage = '\n'.join(splitMess)
     return modMessage
+    
 cacheData = {}
+cacheSize = 0
 soc = socket(AF_INET, SOCK_STREAM) 
 soc.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
 soc.bind(("", 12345))
@@ -47,7 +49,6 @@ while True:
     # parsing request for filename
     filename = parseRequest(request)
     # Make socket for connection to the final server
-    
     serverSoc = socket(AF_INET, SOCK_STREAM) 
     host,port = filename.split("/")[1].split(":")
     print "[Proxy Server]: Connecting to ",host," at port ",port
@@ -83,7 +84,12 @@ while True:
                 print "[Proxy Server]: Data not cached!"
             else:
                 print "[Proxy Server]: Caching data!"
+                if  cacheSize == 3:
+                    cacheData.popitem()
+                    cacheSize = cacheSize - 1
                 cacheData[filename] = response
+                cacheSize = cacheSize + 1
+                
         except:
             print "[Proxy Server]: Error handling request"
     clientSoc.close() 
